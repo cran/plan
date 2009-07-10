@@ -1,7 +1,9 @@
 plot.burndown <- function(x, col=NULL, draw.plan=TRUE,
                           draw.regression=TRUE,
                           draw.lastupdate=FALSE,
-                          t.stop="", debug=FALSE, ...)
+                          t.stop="",
+                          y.name="Remaining Effort",
+                          debug=FALSE, ...)
 {
     if (!inherits(x, "burndown")) stop("method is only for burndown objects")
     opar <- par(no.readonly = TRUE)
@@ -49,7 +51,9 @@ plot.burndown <- function(x, col=NULL, draw.plan=TRUE,
         time.max = x$deadline
     }
     time.range <- range(c(t[1], time.max))
-    plot(time.range, range(c(0,sum(x$tasks$effort))),type='n',ylab="Remaining Effort", xaxs="i")
+    plot(time.range, range(c(0,sum(x$tasks$effort))),type='n',
+         ylab=y.name,
+         xaxs="i")
     xx <- c(t, rev(t))
     bottom <- rep(0,1+num.progress)
     for (i in 1:num.items) {

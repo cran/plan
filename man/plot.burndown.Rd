@@ -8,7 +8,9 @@
 
 \usage{plot.burndown(x, col=NULL,
 	draw.plan=TRUE, draw.regression=TRUE, draw.lastupdate=FALSE,
-	t.stop="", debug=FALSE, ...)
+	t.stop="", 
+	y.name="Remaining Effort",
+	debug=FALSE, ...)
 }
 
 \arguments{
@@ -25,7 +27,8 @@
   \item{draw.lastupdate}{boolean, set to \code{TRUE} to draw the last
     update (which otherwise requires a sharp eye).}
   \item{t.stop}{a POSIX time, the maximum time for graph (defaults to
-    deadline if not given)}
+    deadline if not given).}
+  \item{y.name}{character string, for labelling the vertical axis.}
   \item{debug}{boolean, set to \code{TRUE} to monitor the work.}
   \item{...}{extra things handed down to plotting functions.}
 }

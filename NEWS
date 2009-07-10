@@ -1,3 +1,6 @@
+Version 0.1.1
+- add argument 'y.name' to plot.burndown().
+- vectorize trim.whitespace (code provided by David Rosenberg)
 Version 0.1.0
-- first version
-- as now-defunct 'projectplanning' package, except for CSV data format
+- first version, uploaded 2009-04-26 to CRAN.
+- as now-defunct 'projectplanning' package, except for CSV data format.

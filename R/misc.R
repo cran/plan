@@ -7,13 +7,10 @@ check.tokens <- function(tokens, expected)
         if (tokens[i] != expected[i]) stop("expecting word", expected[i], "but got", tokens[i])
     }
 }
+
 trim.whitespace <- function(x)
 {
-    n <- length(x)
-    for (i in 1:n) {
-        x[i] <- gsub("^[ \t]*", "", x[i])
-        x[i] <- gsub("[ \t]*$", "", x[i])
-    }
-    x
+    x <- gsub("^[ \t]*", "", x)
+    x <- gsub("[ \t]*$", "", x)
 }
 
