@@ -6,10 +6,11 @@
 
 \description{Plot a Gantt object.}
 
-\usage{plot.gantt(x,
+\usage{\method{plot}{gantt}(x,
+           xlim,
            time.format = NULL,
            time.labels.by, time.lines.by,
-	   event.time = NULL, event.label = NULL,
+	   event.time = NULL, event.label = NULL, event.side=3,
 	   col.done = gray(0.3), col.notdone = gray(0.9),
 	   col.event = gray(0.1), col.connector = "black",
            grid.col = "lightgray", grid.lty = "dotted",
@@ -20,6 +21,8 @@
 }
 \arguments{
   \item{x}{an object of class \code{gantt}.}
+  \item{xlim}{optional range of time axis; if not provided, the range of times
+      in \code{x} will be used.}
   \item{time.format}{format for dates on time axis; defaults to 3-letter month.}
   \item{time.labels.by}{suggested label increment on time axis,
     e.g. \code{time.labels.by="2 months"} to get a two-month interval.
@@ -30,6 +33,7 @@
   \item{event.time}{List of events, e.g. conferences, whose time cannot
     be altered.}
   \item{event.label}{list of names of these events.}
+  \item{event.side}{side for event labels.}
   \item{col.done}{colour of work that has been done already.}
   \item{col.notdone}{colour of work that has not been done already.}
   \item{col.event}{colour of events.}
