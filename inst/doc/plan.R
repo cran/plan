@@ -1,17 +1,17 @@
-## ---- echo = FALSE-------------------------------------------------------
+## ---- echo = FALSE------------------------------------------------------------
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library("plan")
 data(burndown)
 plot(burndown)
 
-## ----fig.height=4, fig.width=6, dev.args=list(pointsize=10)--------------
+## ----fig.height=4, fig.width=6, dev.args=list(pointsize=10)-------------------
 library("plan")
 data(gantt)
 plot(gantt)
 
-## ----fig.height=4, fig.width=6, dev.args=list(pointsize=10)--------------
+## ----fig.height=4, fig.width=6, dev.args=list(pointsize=10)-------------------
 library("plan")
 g <- new("gantt")
 g <- ganttAddTask(g, "Courses") # no times, so a heading

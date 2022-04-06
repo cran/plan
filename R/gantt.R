@@ -1,16 +1,16 @@
-#' Class to store \code{gantt} objects
+#' Class to store gantt objects
 #'
-#' These objects may be created with \code{\link{as.gantt}} or
-#' \code{\link{read.gantt}}.
-#' @family things related to \code{gantt} data
+#' These objects may be created with [as.gantt()] or [read.gantt()].
+#' @family things related to gantt data
+#' @importFrom methods new
 setClass("gantt", contains="plan")
 
 setMethod(f="initialize",
-          signature="gantt",
-          definition=function(.Object) {
-              .Object@data <- list(description=NULL, start=NULL, end=NULL, done=NULL, neededBy=NULL, key=NULL)
-              return(.Object)
-          })
+    signature="gantt",
+    definition=function(.Object) {
+        .Object@data <- list(description=NULL, start=NULL, end=NULL, done=NULL, neededBy=NULL, key=NULL)
+        return(.Object)
+    })
 
 
 #' Draw a Gantt diagram
@@ -26,16 +26,16 @@ setMethod(f="initialize",
 #' be drawn for discreet events. See \dQuote{Examples} for a few of the
 #' possibilities.
 #'
-#' @param x A \code{gantt} object, i.e. one inheriting from \code{\link{gantt-class}}.
+#' @param x A [gantt-class] object.
 #' @param xlim optional range of time axis; if not provided, the range of times
-#' in \code{x} will be used.
+#' in `x` will be used.
 #' @param time.format format for dates on time axis; defaults to 3-letter
 #' month.
 #' @param time.labels.by suggested label increment on time axis, e.g.
-#' \code{time.labels.by="2 months"} to get a two-month interval.  If not
+#' `time.labels.by="2 months"` to get a two-month interval.  If not
 #' supplied, the axis will be generated automatically.
 #' @param time.lines.by suggested interval between vertical grid lines on the
-#' plot, e.g. \code{time.lines.by="1 week"} for weekly.  If not supplied, the
+#' plot, e.g. `time.lines.by="1 week"` for weekly.  If not supplied, the
 #' grid will be generated automatically.
 #' @param event.time vector of event times, e.g. conferences, whose time cannot
 #' be altered.
@@ -55,36 +55,36 @@ setMethod(f="initialize",
 #' @param bg background colour for plot.
 #' @param grid.col colour for grid.
 #' @param grid.lty line type for grid.
-#' @param ylabels A \code{\link{list}} with elements \code{col} for colour,
-#' \code{cex} for character-expansion factor, \code{font} for font, and \code{justification}
-#' for the placement in the margin (\code{0} means left-justified, and \code{1}
+#' @param ylabels A [list] with elements `col` for colour,
+#' `cex` for character-expansion factor, `font` for font, and `justification`
+#' for the placement in the margin (`0` means left-justified, and `1`
 #' means right-justified. (NOTE: left-justification works poorly in RStudio, but
 #' properly in other systems.)
-#' It usually makes sense for the elements in \code{ylabels} to be vectors of the same
+#' It usually makes sense for the elements in `ylabels` to be vectors of the same
 #' length as the topic list. However, shorter vectors are permitted, and they lengthened by
 #' copying the default values at the end (see Example 6).
 #' @param arrows A vector of strings, one for each topic, indicating the nature of
 #' the arrows that may be drawn at the ends of task bars. The individual values
-#' may be \code{"left"}, \code{"right"}, \code{"both"} or \code{"neither"}.
-#' Set \code{arrows=NULL}, the default, to avoid such arrows.
+#' may be `"left"`, `"right"`, `"both"` or `"neither"`.
+#' Set `arrows=NULL`, the default, to avoid such arrows.
 #' @param main character string to be used as chart title.
-#' @param line.main line where title occurs. If \code{NA}, then the
-#' title is placed in a default location; otherwise, it is \code{line.main}
+#' @param line.main line where title occurs. If `NA`, then the
+#' title is placed in a default location; otherwise, it is `line.main`
 #' lines above the top of the plot.
 #' @param cex.main numeric, font-size factor for title.
-#' @param mgp setting for \code{\link{par}(mgp)}, within-axis spacing. The
+#' @param mgp setting for [par]`(mgp)`, within-axis spacing. The
 #' default value tightens axis spacing.
 #' @param maiAdd inches to add to the auto-computed margins at the bottom,
 #' left, top, and right margins. The values may be negative (to tighten
 #' margins) but the sum will be truncated to remain positive.
-#' @param axes logical, \code{TRUE} to draw the x axis. (Setting to
-#' \code{FALSE} permits detailed axis tweaking.)
-#' @param debug logical value, \code{TRUE} to monitor the work.
+#' @param axes logical, `TRUE` to draw the x axis. (Setting to
+#' `FALSE` permits detailed axis tweaking.)
+#' @param debug logical value, `TRUE` to monitor the work.
 #' @param ... extra things handed down.
 #' @author Dan Kelley
-#' @family things related to \code{gantt} data
+#' @family things related to gantt data
 #' @references Gantt diagrams are described on wikipedia
-#' \url{http://en.wikipedia.org/wiki/Gantt_Chart}.
+#' `https://en.wikipedia.org/wiki/Gantt_Chart`.
 #'
 #' @examples
 #' library(plan)
@@ -124,23 +124,26 @@ setMethod(f="initialize",
 #' # 8. Arrows at task ends
 #' plot(gantt, arrows=c("right","left","left","right"))
 #' @aliases plot.gantt
+#' @importFrom grDevices gray hcl
+#' @importFrom graphics abline axis axis.POSIXct box grconvertX legend lines mtext par points polygon rect rug strheight strwidth text
+#' @export
 setMethod(f="plot",
-          signature=signature("gantt"),
-          definition=function (x, xlim,
-                        time.format=NULL, time.labels.by, time.lines.by,
-                        event.time=NULL, event.label=NULL, event.side=3,
-                        col.connector="black",
-                        col.done=gray(0.3), col.notdone=gray(0.9),
-                        col.eventLine=gray(0.1), col.event=par("fg"),
-                        cex.event=par("cex"), font.event=par("font"),
-                        lty.eventLine=par("lty"), lwd.eventLine=par("lwd"),
-                        bg=par("bg"), grid.col="lightgray", grid.lty="dotted",
-                        ylabels=list(col=1, cex=1, font=1, justification=1),
-                        arrows=NULL,
-                        main="", line.main=NA, cex.main=par("cex"),
-                        mgp=c(2, 0.7, 0), maiAdd=rep(0, 4),
-                        axes=TRUE,
-                        debug=FALSE, ...)
+    signature=signature("gantt"),
+    definition=function (x, xlim,
+        time.format=NULL, time.labels.by, time.lines.by,
+        event.time=NULL, event.label=NULL, event.side=3,
+        col.connector="black",
+        col.done=gray(0.3), col.notdone=gray(0.9),
+        col.eventLine=gray(0.1), col.event=par("fg"),
+        cex.event=par("cex"), font.event=par("font"),
+        lty.eventLine=par("lty"), lwd.eventLine=par("lwd"),
+        bg=par("bg"), grid.col="lightgray", grid.lty="dotted",
+        ylabels=list(col=1, cex=1, font=1, justification=1),
+        arrows=NULL,
+        main="", line.main=NA, cex.main=par("cex"),
+        mgp=c(2, 0.7, 0), maiAdd=rep(0, 4),
+        axes=TRUE,
+        debug=FALSE, ...)
 {
     if (!inherits(x, "gantt")) stop("method is only for gantt objects")
     opar <- par(no.readonly = TRUE)
@@ -148,7 +151,7 @@ setMethod(f="plot",
     t0 <- as.POSIXct("1970-01-01 00:00:00")
     ## Lengthen anything that can be a vector
     ndescriptions <- length(x[["description"]])
-    if (length(arrows) == 0)
+    if (length(arrows) == 0L)
         arrows <- rep("none", ndescriptions)
     if (length(arrows) < ndescriptions)
         arrows <- c(arrows, rep("none", ndescriptions-length(arrows)))
@@ -168,7 +171,7 @@ setMethod(f="plot",
             ylabels[[i]] <- c(ylabels[[i]], rep(1, ndescriptions-len))
         }
     }
-    if (any(ylabels$justification != 0 && ylabels$justification != 1))
+    if (any(!(ylabels$justification %in% c(0, 1))))
         stop("ylabels$justification entries must be 0 or 1")
     if (length(col.done) < ndescriptions)
         col.done <- rep(col.done, length.out=ndescriptions)
@@ -249,12 +252,12 @@ setMethod(f="plot",
         if (missing(time.labels.by)) {
             ##xaxp <- par("xaxp")
             lines.at.0 <- axis.POSIXct(1,
-                                       at=pretty(r, 10), #seq(xaxp[1], xaxp[2], length.out=xaxp[3]) + t0,
-                                       format=time.format, cex.axis=par("cex.axis"), ...)
+                at=pretty(r, 10), #seq(xaxp[1], xaxp[2], length.out=xaxp[3]) + t0,
+                format=time.format, cex.axis=par("cex.axis"), ...)
         } else {
             lines.at.0 <- axis.POSIXct(1,
-                                       at=as.POSIXct(seq.POSIXt(as.POSIXct(xlim[1]), as.POSIXct(xlim[2]), by=time.labels.by)),
-                                       format=time.format, cex.axis=par("cex.axis"), ...)
+                at=as.POSIXct(seq.POSIXt(as.POSIXct(xlim[1]), as.POSIXct(xlim[2]), by=time.labels.by)),
+                format=time.format, cex.axis=par("cex.axis"), ...)
         }
     }
     if (axes) {
@@ -278,8 +281,8 @@ setMethod(f="plot",
                  col=ylabels$col[i], cex=ylabels$cex[i], font=ylabels$font[i])
         } else {
             left <- grconvertX(0, 'device', 'user')
-            warning("In plot() method for gantt objects :\n  justification=0 places labels poorly in RStudio, better in other systems",
-                    call.=FALSE)
+            ## warning("In plot() method for gantt objects :\n  justification=0 places labels poorly in RStudio, better in other systems",
+            ##         call.=FALSE)
             ## message("  left= ", left, " (the thick black line is there)")
             ## message("  Q: why is this black line not at the left of the graph?")
             text(left, topdown[i], x[["description"]][i], pos=4,
@@ -340,13 +343,13 @@ setMethod(f="plot",
                 if (arrow == "left" || arrow == "both") {
                     colTriangle <- if (left == mid) col.notdone else col.done
                     polygon(c(left, left-D, left), c(bottom, 0.5*(bottom+top), top),
-                            border=colTriangle[i], col=colTriangle[i])
+                        border=colTriangle[i], col=colTriangle[i])
                     lines(c(left, left-D, left), c(bottom, 0.5*(bottom+top), top))
                 }
                 if (arrow == "right" || arrow == "both") {
                     colTriangle <- if (right == mid) col.done else col.notdone
                     polygon(c(right, right+D, right), c(bottom, 0.5*(bottom+top), top),
-                            border=colTriangle[i], col=colTriangle[i])
+                        border=colTriangle[i], col=colTriangle[i])
                     lines(c(right, right+D, right), c(bottom, 0.5*(bottom+top), top))
                 }
             }
@@ -358,74 +361,70 @@ setMethod(f="plot",
 })
 
 
-
-
-
 #' Summarize a gantt object
 #'
 #' Summarizes a gantt object.
 #'
 #' Prints a summary of a gantt dataset.
 #'
-#' @param object A \code{gantt} object, i.e. one inheriting from \code{\link{gantt-class}}.
+#' @param object A [gantt-class] object.
 #' @param ... ignored.
 #' @author Dan Kelley
-#' @family things related to \code{gantt} data
+#' @family things related to gantt data
 #' @references
-#' \url{http://alistair.cockburn.us/crystal/articles/evabc/earnedvalueandburncharts.htm}.
+#' \url{https://en.wikipedia.org/wiki/Burndown_chart}
 #' @examples
 #' library(plan)
 #' data(gantt)
 #' summary(gantt)
+#' @export
 setMethod(f="summary",
-          signature="gantt",
-          definition=function(object, ...) {
-              if (length(object@data[[1]])) {
-                  max.description.width <- max(nchar(as.character(object[["description"]])))
-                  num.descriptions <- length(object[["description"]])
-                  cat("Key, Description,", paste(rep(" ", max.description.width-12), collapse=""), "Start,      End,        Done, NeededBy\n")
-                  for (t in 1:num.descriptions) {
-                      spacer <- paste(rep(" ", 1 + max.description.width - nchar(as.character(object[["description"]][t]))),
-                                      collapse="")
-                      cat(paste(format(object[["key"]][t], width=3, justify="right"), ",", sep=""),
-                          paste(as.character(object[["description"]][t]), ",",
-                                spacer,
-                                format(object[["start"]][t]), ", ",
-                                object[["end"]][t],  ", ",
-                                format(object[["done"]][t], width=4, justify="right"), sep = ""))
-                      nb <- object[["neededBy"]][t][[1]]
-                      if (!is.null(nb) && !is.na(nb[1])) {
-                          cat(", ")
-                          for (nbi in 1:length(nb)) {
-                              cat(object[["description"]][as.numeric(nb[nbi])], " ")
-                          }
-                      }
-                      cat("\n")
-                  }
-              } else {
-                  cat("empty\n")
-              }
-          })
+    signature="gantt",
+    definition=function(object, ...) {
+        if (length(object@data[[1]])) {
+            max.description.width <- max(nchar(as.character(object[["description"]])))
+            num.descriptions <- length(object[["description"]])
+            cat("Key, Description,", paste(rep(" ", max.description.width-12), collapse=""), "Start,      End,        Done, NeededBy\n")
+            for (t in 1:num.descriptions) {
+                spacer <- paste(rep(" ", 1 + max.description.width - nchar(as.character(object[["description"]][t]))),
+                    collapse="")
+                cat(paste(format(object[["key"]][t], width=3, justify="right"), ",", sep=""),
+                    paste(as.character(object[["description"]][t]), ",",
+                        spacer,
+                        format(object[["start"]][t]), ", ",
+                        object[["end"]][t],  ", ",
+                        format(object[["done"]][t], width=4, justify="right"), sep = ""))
+                nb <- object[["neededBy"]][t][[1]]
+                if (!is.null(nb) && !is.na(nb[1])) {
+                    cat(", ")
+                    for (nbi in 1:length(nb)) {
+                        cat(object[["description"]][as.numeric(nb[nbi])], " ")
+                    }
+                }
+                cat("\n")
+            }
+        } else {
+            cat("empty\n")
+        }
+    })
 
 
-
-
-
-#' Create a \code{gantt} object, i.e. one inheriting from \code{\link{gantt-class}}.
+#' Create a gantt object.
+#'
+#' This creates a [gantt-class] object.
 #'
 #' @param key integer key for task, normally 1 for the first task, 2 for the
 #' second, etc.
 #' @param description character string describing the task (brief)
 #' @param start start date for task (POSIXt or character string that converts
-#' to POSIXt with \code{\link{as.POSIXct}}
+#' to POSIXt with [as.POSIXct()]
 #' @param end end date for task (POSIXt or character string that converts to
-#' POSIXt with \code{\link{as.POSIXct}}
+#' POSIXt with [as.POSIXct()].
 #' @param done percentage completion for the task
 #' @param neededBy optional key for a dependent task
-#' @return An object of type \code{"gantt"}; for details, see
-#' \code{\link{read.gantt}}.
+#' @return A [gantt-class] object; for details, see [read.gantt()].
 #' @author Dan Kelley
-#' @family things related to \code{gantt} data
+#' @family things related to gantt data
 #' @examples
 #'
 #' library(plan)
@@ -461,6 +460,7 @@ setMethod(f="summary",
 #'               done=rep(0, 7))
 #' plot(g, xlim=c(arrive, leave),
 #'      ylabel=list(font=c(2,rep(1,3),2), justification=c(0,rep(1,3),0)))
+#' @export
 as.gantt <- function(key, description, start, end, done, neededBy)
 {
     if (missing(key))
@@ -478,11 +478,11 @@ as.gantt <- function(key, description, start, end, done, neededBy)
         neededBy <- rep(NA, n)
     rval <- new("gantt")
     rval@data <- list(key=key,
-                      description=as.character(description),
-                      start=as.POSIXct(start),
-                      end=as.POSIXct(end),
-                      done=done,
-                      neededBy=neededBy)
+        description=as.character(description),
+        start=as.POSIXct(start),
+        end=as.POSIXct(end),
+        done=done,
+        neededBy=neededBy)
     rval
 }
 
@@ -496,36 +496,36 @@ as.gantt <- function(key, description, start, end, done, neededBy)
 #' The data format is strict, and deviations from it may lead to error messages
 #' that are difficult to understand; see \dQuote{Details}.
 #'
-#' The first line is a header, and must contain the words \code{Key},
-#' \code{Description}, \code{Start}, \code{End}, \code{Done}, and
-#' \code{NeededBy}, written exactly in this way, with commas separating the
+#' The first line is a header, and must contain the words `Key`,
+#' `Description`, `Start`, `End`, `Done`, and
+#' `NeededBy`, written exactly in this way, with commas separating the
 #' words.  (Blanks are ignored in this line.)
 #'
 #' Additional lines indicate the details of each of several sub-projects, in
 #' comma-separated items, as follows:
 #'
-#' \itemize{ \item A key for the task.  These must be distinct, and are
+#' * A key for the task.  These must be distinct, and are
 #' typically just the numbers 1, 2, 3, etc.
 #'
-#' \item A description of the task.  (This may not contain commas!)
+#' * A description of the task.  (This may not contain commas!)
 #'
-#' \item The start time for the task, in ISO 8601 format (\code{YYYY-MM-DD} or
-#' \code{YYYY-MM-DD hh:mm:ss}).
+#' * The start time for the task, in ISO 8601 format (`YYYY-MM-DD` or
+#' `YYYY-MM-DD hh:mm:ss`).
 #'
-#' \item The end time for the task, in the same format as the starting time. If
+#' * The end time for the task, in the same format as the starting time. If
 #' an end time equals the corresponding start time, no rectangle will be drawn
 #' for the activity, and this gives a way to make headings (see example 7
-#' for \code{\link{plot,gantt-method}}).
+#' for [plot,gantt-method()]).
 #'
-#' \item A number indicating the percentage of this task that has been
+#' * A number indicating the percentage of this task that has been
 #' completed to date.
 #'
-#' \item A space-separated optional list of numbers that indicate the keys of
+#' * A space-separated optional list of numbers that indicate the keys of
 #' other tasks that depend on this one.  This list is ignored in the present
-#' version of \code{read.gantt}.  }
+#' version of [read.gantt()].
 #'
 #' @section Sample data file:
-#' \preformatted{
+#'```
 #' Key, Description,                 Start,        End, Done, NeededBy
 #'   1, Assemble equipment,     2008-01-01, 2008-03-28, 90
 #'   2, Test methods,           2008-02-28, 2008-03-28, 30
@@ -539,28 +539,27 @@ as.gantt <- function(key, description, start, end, done, neededBy)
 #'  10, Thesis on display,      2009-04-01, 2009-04-15, 0
 #'  11, Defend thesis,          2009-04-16, 2009-04-17, 0
 #'  12, Finalize thesis,        2009-04-18, 2009-05-07, 0
-#' }
+#'```
 #'
 #' @param file a connection or a character string giving the name of the file
 #' to load.
-#' @param debug boolean, set to \code{TRUE} to print debugging information.
-#' @return An object of type \code{"gantt"}, which is a data frame containing
-#' \code{"description"} (a character description of the task) \code{"start"}
-#' (the task's start time), \code{"end"} (the task's end time),
-#' \code{"progress"} (a number giving the percent progress on this item, or
-#' \code{NA} if none given), and \code{"needed.by"} (a number giving the
-#' indices of other tasks that rely on this task, or \code{NA} if none given).
+#' @param debug boolean, set to `TRUE` to print debugging information.
+#' @return A [gantt-class] object, which is a data frame containing
+#' `description` (a character description of the task), `"start"`
+#' (the task's start time), `"end"` (the task's end time),
+#' `"progress"` (a number giving the percent progress on this item, or
+#' `NA` if none given), and `needed.by` (a number giving the
+#' indices of other tasks that rely on this task, or `NA` if none given).
 #' @author Dan Kelley
-#' @family things related to \code{gantt} data
+#' @family things related to gantt data
 #' @examples
-#'
-#' \dontrun{
 #' library(plan)
-#' gantt <- read.gantt("demo/gantt.dat")
-#' summary(gantt)
-#' plot(gantt)
-#' }
+#' filename <- system.file("extdata", "gantt.dat", package="plan")
+#' g <- read.gantt(filename)
+#' summary(g)
+#' plot(g)
 #'
+#' @export
 read.gantt <- function(file, debug=FALSE)
 {
     if (is.character(file)) {
@@ -573,12 +572,12 @@ read.gantt <- function(file, debug=FALSE)
         on.exit(close(file))
     }
     quiet <- !debug
-    tokens <- trim.whitespace(scan(file,what='char',sep=",",nlines=1,quiet=quiet))
+    tokens <- trimws(scan(file,what='char',sep=",",nlines=1,quiet=quiet))
     check.tokens(tokens, c("Key", "Description", "Start", "End", "Done", "NeededBy"))
     key <- description <- start <- end <- done <- neededBy <- c()
     while (TRUE) {
-        tokens <- trim.whitespace(scan(file, what=character(0), nlines=1,
-                                       blank.lines.skip=FALSE, quiet=quiet, sep=","))
+        tokens <- trimws(scan(file, what=character(0), nlines=1,
+                blank.lines.skip=FALSE, quiet=quiet, sep=","))
         ni <- length(tokens)
         if (ni > 1) {
             if (ni < 3) stop("need at least 3 items per line")
@@ -593,31 +592,31 @@ read.gantt <- function(file, debug=FALSE)
         }
     }
     as.gantt(key=key,
-             description=as.character(description),
-             start=as.POSIXct(start),
-             end=as.POSIXct(end),
-             done=done,
-             neededBy=neededBy)
+        description=as.character(description),
+        start=as.POSIXct(start),
+        end=as.POSIXct(end),
+        done=done,
+        neededBy=neededBy)
 }
 
 #' Add a task to a gantt object
 #'
-#' This can be a simpler method than using \code{\link{as.gantt}}, because
+#' This can be a simpler method than using [as.gantt()], because
 #' tasks can be added one at a time.
 #'
-#' @param g A \code{gantt} object, i.e. one inheriting from \code{\link{gantt-class}}.
+#' @param g A [gantt-class] object.
 #' @param description A character string describing the task.
-#' @param start A character string indicating the task start time, in a format understood by \code{\link{as.POSIXct}}.
-#' Set to \code{""} (the default) to indicate that \code{description} is a heading, with no start and end time.
-#' @param end A character string indicating the end time, in a format understood by \code{\link{as.POSIXct}}.
+#' @param start A character string indicating the task start time, in a format understood by [as.POSIXct()].
+#' Set to `""` (the default) to indicate that `description` is a heading, with no start and end time.
+#' @param end A character string indicating the end time, in a format understood by [as.POSIXct()].
 #' @param done A numerical value indicating the fraction done.
 #' @param neededBy An integer indicating a task that depends on the completion of this task. If this is
-#' \code{NA}, then the task is not needed by any other task.
+#' `NA`, then the task is not needed by any other task.
 #' @param key An optional value indicating the desired key value. If not given, this will default to
-#' one beyond the highest key in \code{g}. Otherwise, if \code{key} is an integer matching
-#' a task that is already in \code{g}, then that task is replaced; otherwise, the new task
+#' one beyond the highest key in `g`. Otherwise, if `key` is an integer matching
+#' a task that is already in `g`, then that task is replaced; otherwise, the new task
 #' is placed between the tasks with integral keys on either side of the task. For example, setting
-#' \code{key=4.5} places this between existing keys 4 and 5 (and then renumbers all keys
+#' `key=4.5` places this between existing keys 4 and 5 (and then renumbers all keys
 #' to be integers); see \dQuote{Examples}.
 #'
 #' @examples
@@ -641,7 +640,8 @@ read.gantt <- function(file, debug=FALSE)
 #' font <- ifelse(is.na(g[["start"]]), 2, 1)
 #' plot(g, ylabel=list(font=font))
 #'
-#' @family things related to \code{gantt} data
+#' @family things related to gantt data
+#' @export
 ganttAddTask <- function(g, description="", start=NA, end=NA, done=0, neededBy=NA, key)
 {
     if (!inherits(g, "gantt")) stop("method only applies to gantt objects")
